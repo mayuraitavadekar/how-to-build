@@ -1,13 +1,13 @@
 import { motion } from 'motion/react';
-import { lazy, Suspense, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { load } from './App';
+import { HeroArt } from './components/HeroArt';
 import { PartIcon } from './components/PartIcon';
 import { PARTS } from './data/parts';
 import { ALL_TARGETS, PHASES, STEPS, type Phase } from './data/steps';
 import type { PartId } from './data/parts';
 import './home.css';
 
-const Viewer3D = lazy(() => import('./components/Viewer3D'));
 
 const PHASE_INFO: Record<Phase, { blurb: string; learn: string[]; icon: PartId; minutes: string }> = {
   Prepare: {
@@ -123,11 +123,9 @@ export function Home({ onStart }: { onStart: (step?: number) => void }) {
             </div>
           </div>
         </motion.div>
-        <motion.div className="hero-visual" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }}>
-          <Suspense fallback={<div className="viewer-loading">Loading 3D…</div>}>
-            <Viewer3D has={() => true} powered compact />
-          </Suspense>
-          <span className="hero-badge">● Live 3D model: drag to spin it</span>
+        <motion.div className="hero-visual art" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.1 }}>
+          <HeroArt />
+          <span className="hero-badge">● Every part labelled, from cooler to PSU</span>
         </motion.div>
       </section>
 

@@ -436,7 +436,7 @@ export const STEPS: Step[] = [
     phase: 'Finish',
     scene: 'case',
     title: 'First boot!',
-    instruction: 'Flip the PSU switch to ON ( I ) and press the power button.',
+    instruction: 'Flip the PSU switch to ON ( I ) and press the power button. Use the button below, or open the 3D view and click the real power button on top of the case.',
     details: [
       'The first boot can take 1–3 minutes of "memory training" on DDR5. Be patient!',
       'Enter the BIOS (usually DEL or F2) and check the CPU, RAM and SSD are detected.',

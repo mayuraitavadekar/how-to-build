@@ -333,7 +333,13 @@ export default function App({ startStep, onHome }: { startStep?: number; onHome:
             ) : (
               <div className="scene">
                 <Suspense fallback={<div className="viewer-loading">Loading 3D…</div>}>
-                  <Viewer3D has={has} powered={state.powered} fresh={step.targets.map((t) => t.id)} />
+                  <Viewer3D
+                    has={has}
+                    powered={state.powered}
+                    fresh={step.action === 'power' && !state.powered ? ['f-boot'] : step.targets.map((t) => t.id)}
+                    canPower={step.action === 'power' && furthest === STEPS.length - 1 && !state.powered}
+                    onPower={onPower}
+                  />
                 </Suspense>
               </div>
             )}
