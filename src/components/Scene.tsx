@@ -1,5 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import { AnimatePresence, motion } from 'motion/react';
+import type { ReactNode } from 'react';
 import type { PartId } from '../data/parts';
 import { MOBO_TRANSFORM, SCENE_H, SCENE_W, toScene, type SceneId, type Target } from '../data/steps';
 import { Drop, MOBO_HOLES, Motherboard } from './Motherboard';
@@ -15,6 +16,7 @@ interface SceneProps {
   hintTarget: string | null;
   wrongTarget: string | null;
   onZoneClick: (t: Target) => void;
+  overlay?: ReactNode;
 }
 
 export function Scene(props: SceneProps) {
@@ -48,6 +50,7 @@ export function Scene(props: SceneProps) {
           />
         ))}
       </div>
+      {props.overlay}
       <div className="scene-badge">{scene === 'bench' ? 'Workbench · motherboard on its box' : has('c-case') ? 'Case · side view (glass removed)' : 'Workspace'}</div>
     </div>
   );
@@ -102,81 +105,7 @@ function Bench({ has, powered }: { has: (id: string) => boolean; powered: boolea
   return (
     <g>
       <rect width={SCENE_W} height={SCENE_H} fill="url(#desk)" />
-      {/* anti-static mat */}
-      <rect x={14} y={14} width={972} height={692} rx={18} fill="#14304a" opacity={0.65} />
-      <g opacity={0.12} stroke="#7dd3fc">
-        {Array.from({ length: 24 }).map((_, i) => (
-          <line key={`v${i}`} x1={14 + i * 42} y1={14} x2={14 + i * 42} y2={706} />
-        ))}
-        {Array.from({ length: 17 }).map((_, i) => (
-          <line key={`h${i}`} x1={14} y1={14 + i * 42} x2={986} y2={14 + i * 42} />
-        ))}
-      </g>
-
-      {/* wrist area */}
-      <g>
-        <rect x={30} y={70} width={180} height={170} rx={14} fill="#0b1626" opacity={0.6} />
-        <path
-          d="M 60 236 C 60 200, 62 170, 70 150 L 66 108 C 65 98, 78 96, 80 106 L 86 140 L 88 96 C 88 86, 102 86, 102 96 L 104 138 L 110 100 C 111 90, 124 91, 123 101 L 120 142 L 132 114 C 136 105, 148 110, 145 119 L 128 170 C 124 196, 122 216, 122 236 Z"
-          fill="#f2c7a5"
-          stroke="#c7987a"
-          strokeWidth={1.5}
-        />
-        <text x={120} y={92} fontSize={13} fill="#94a3b8" textAnchor="middle" fontWeight={600}>
-          You
-        </text>
-        {has('p-wrist') && (
-          <Drop>
-            <rect x={56} y={196} width={70} height={18} rx={6} fill="#2563eb" stroke="#1e3a8a" strokeWidth={2} />
-            <rect x={82} y={198} width={18} height={14} rx={3} fill="#1e3a8a" />
-            <path d="M 126 205 q 14 -6 18 6 q 4 12 16 2 q 12 -10 18 4 q 6 14 18 4" stroke="#1d4ed8" strokeWidth={3} fill="none" />
-            <path d="M 196 221 l 10 -6 l 0 10 z" fill="#ef4444" />
-            <text x={150} y={236} fontSize={10} fill="#4ade80" textAnchor="middle" fontWeight={600}>
-              ● grounded
-            </text>
-          </Drop>
-        )}
-      </g>
-
-      {/* tool tray */}
-      <g>
-        <rect x={30} y={300} width={180} height={170} rx={14} fill="#0b1626" stroke="#1e3a5f" strokeWidth={2} />
-        <rect x={42} y={312} width={156} height={146} rx={10} fill="#0f1d30" />
-        <text x={120} y={330} fontSize={12} fill="#64748b" textAnchor="middle" fontWeight={600}>
-          TOOL TRAY
-        </text>
-        {has('p-tray') && (
-          <Drop>
-            <g transform="translate(120 395) rotate(-25)">
-              <rect x={-70} y={-12} width={60} height={24} rx={10} fill="#f97316" />
-              <rect x={-10} y={-5} width={10} height={10} fill="#111827" />
-              <rect x={0} y={-3} width={58} height={6} fill="#cbd5e1" />
-              <path d="M 58 -4 l 10 4 l -10 4 z" fill="#94a3b8" />
-            </g>
-          </Drop>
-        )}
-      </g>
-
-      {/* screw bowl */}
-      <g>
-        <ellipse cx={120} cy={580} rx={80} ry={50} fill="#0b1626" stroke="#1e3a5f" strokeWidth={2} />
-        <ellipse cx={120} cy={575} rx={64} ry={36} fill="#08111e" />
-        {[
-          [96, 572],
-          [118, 588],
-          [140, 566],
-          [130, 580],
-          [106, 560],
-        ].map(([x, y], i) => (
-          <g key={i}>
-            <circle cx={x} cy={y} r={5} fill="#cbd5e1" />
-            <path d={`M ${x - 3} ${y} h 6 M ${x} ${y - 3} v 6`} stroke="#64748b" strokeWidth={1.2} />
-          </g>
-        ))}
-        <text x={120} y={650} fontSize={12} fill="#64748b" textAnchor="middle" fontWeight={600}>
-          SCREW BOWL
-        </text>
-      </g>
+      <rect width={SCENE_W} height={SCENE_H} fill="url(#grid)" />
 
       {/* motherboard box */}
       <rect x={t.x - 14} y={t.y - 14} width={244 * t.s + 28} height={305 * t.s + 28} rx={6} fill="#a87b4f" />
@@ -185,7 +114,7 @@ function Bench({ has, powered }: { has: (id: string) => boolean; powered: boolea
         MOTHERBOARD BOX
       </text>
       {!has('p-mobo') && (
-        <rect x={t.x} y={t.y} width={244 * t.s} height={305 * t.s} rx={8} fill="none" stroke="#fde68a" strokeWidth={3} strokeDasharray="12 10" opacity={0.6} />
+        <rect x={t.x} y={t.y} width={244 * t.s} height={305 * t.s} rx={8} fill="none" stroke="#fffbeb" strokeWidth={3} strokeDasharray="12 10" opacity={0.9} />
       )}
       {has('p-mobo') && (
         <Drop>
@@ -195,24 +124,6 @@ function Bench({ has, powered }: { has: (id: string) => boolean; powered: boolea
         </Drop>
       )}
 
-      {/* manual */}
-      <g transform="translate(830 60) rotate(4)">
-        <rect width={140} height={190} rx={6} fill="#e2e8f0" />
-        <rect width={140} height={36} rx={6} fill="#1e293b" />
-        <text x={70} y={23} fontSize={13} fill="#f8fafc" textAnchor="middle" fontWeight={700}>
-          USER MANUAL
-        </text>
-        {[52, 64, 76, 88, 100, 112, 124, 136, 148, 160].map((y, i) => (
-          <rect key={y} x={14} y={y} width={i % 3 === 2 ? 70 : 112} height={5} rx={2} fill="#94a3b8" />
-        ))}
-      </g>
-      <g transform="translate(830 300) rotate(-3)">
-        <rect width={140} height={200} rx={10} fill="#64748b" opacity={0.5} />
-        <rect width={140} height={200} rx={10} fill="url(#bag)" opacity={0.4} />
-        <text x={70} y={104} fontSize={11} fill="#e2e8f0" textAnchor="middle" fontWeight={600} opacity={0.7}>
-          ANTI-STATIC BAG
-        </text>
-      </g>
     </g>
   );
 }
@@ -253,8 +164,8 @@ function CaseView({ has, powered }: { has: (id: string) => boolean; powered: boo
       <rect width={SCENE_W} height={SCENE_H} fill="url(#grid)" />
       {!has('c-case') && (
         <g>
-          <rect x={170} y={20} width={660} height={680} rx={16} fill="none" stroke="#fde68a" strokeWidth={3} strokeDasharray="14 12" opacity={0.6} />
-          <text x={500} y={360} textAnchor="middle" fontSize={26} fill="#fde68a" opacity={0.7} fontWeight={700}>
+          <rect x={170} y={20} width={660} height={680} rx={16} fill="none" stroke="#d97706" strokeWidth={3} strokeDasharray="14 12" opacity={0.7} />
+          <text x={500} y={360} textAnchor="middle" fontSize={26} fill="#b45309" opacity={0.8} fontWeight={700}>
             Place the case here
           </text>
         </g>
@@ -278,7 +189,7 @@ function CaseView({ has, powered }: { has: (id: string) => boolean; powered: boo
             <rect key={i} x={172} y={282 + i * 30} width={12} height={24} rx={2} fill={has('c-gpu') && i < 3 ? '#0b111c' : '#334155'} />
           ))}
           {/* I/O opening */}
-          {!has('c-io') && <rect x={196} y={56} width={40} height={228} rx={3} fill="#020617" stroke="#fde68a" strokeDasharray="6 6" opacity={0.7} />}
+          {!has('c-io') && <rect x={196} y={56} width={40} height={228} rx={3} fill="#020617" stroke="#f59e0b" strokeDasharray="6 6" opacity={0.7} />}
           {/* grommets */}
           <rect x={612} y={110} width={22} height={100} rx={9} fill="#020617" stroke="#1f2937" strokeWidth={2} />
           <rect x={612} y={232} width={22} height={110} rx={9} fill="#020617" stroke="#1f2937" strokeWidth={2} />

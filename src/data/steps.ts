@@ -59,30 +59,13 @@ export function toScene(z: Zone, scene: SceneId): Zone {
 export const STEPS: Step[] = [
   // ───────────────────────── PREPARE ─────────────────────────
   {
-    id: 'prep-tools',
-    phase: 'Prepare',
-    scene: 'bench',
-    title: 'Set up a safe workspace',
-    instruction: 'Drag the anti-static wrist strap onto your wrist and the screwdriver into the tool tray.',
-    details: [
-      'Work on a large, hard table. Avoid building on carpet.',
-      'Put the strap on your wrist and clip it to bare metal (e.g. the case frame).',
-      'Have a small bowl for screws, and keep all manuals handy.',
-      'Good lighting (or a phone flashlight) helps a lot.',
-    ],
-    tip: 'Unbox everything first and check you have every part before you start.',
-    targets: [
-      { id: 'p-wrist', part: 'wrist-strap', label: 'Your wrist', zone: s(30, 70, 180, 170) },
-      { id: 'p-tray', part: 'screwdriver', label: 'Tool tray', zone: s(30, 300, 180, 170) },
-    ],
-  },
-  {
     id: 'prep-mobo',
     phase: 'Prepare',
     scene: 'bench',
     title: 'Place the motherboard on its box',
     instruction: 'Drag the motherboard onto the empty motherboard box in the middle of the bench.',
     details: [
+      'Touch bare metal on the case first to discharge static.',
       'Take the board out of its anti-static bag. Hold it by the edges.',
       'Put it on top of its cardboard box. That’s a perfect, non-conductive work surface.',
       'Don’t place it ON the anti-static bag: the outside of the bag can be conductive.',

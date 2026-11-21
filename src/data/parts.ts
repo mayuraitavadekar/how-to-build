@@ -1,6 +1,4 @@
 export type PartId =
-  | 'wrist-strap'
-  | 'screwdriver'
   | 'case'
   | 'motherboard'
   | 'cmos'
@@ -33,7 +31,7 @@ export type PartId =
   | 'power-cord'
   | 'display-cable';
 
-export type Category = 'core' | 'cooling' | 'power' | 'cables' | 'small' | 'tools';
+export type Category = 'core' | 'cooling' | 'power' | 'cables' | 'small';
 
 export const CATEGORIES: { id: Category | 'all'; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -42,7 +40,6 @@ export const CATEGORIES: { id: Category | 'all'; label: string }[] = [
   { id: 'power', label: 'Power' },
   { id: 'cables', label: 'Cables' },
   { id: 'small', label: 'Small bits' },
-  { id: 'tools', label: 'Tools' },
 ];
 
 export interface Part {
@@ -58,30 +55,6 @@ export interface Part {
 }
 
 export const PARTS: Part[] = [
-  {
-    id: 'wrist-strap',
-    name: 'Anti-static wrist strap',
-    short: 'Keeps static electricity away from the parts',
-    category: 'tools',
-    qty: 1,
-    price: '$5–10',
-    specs: ['Elastic band with a 1 MΩ safety resistor', 'Crocodile clip for grounding', 'Coiled cord, ~1.8 m'],
-    about:
-      'Your body can build up thousands of volts of static. You won’t feel a small discharge, but it can quietly damage a CPU, RAM stick or SSD. The strap keeps you at the same potential as the bare metal of the case or another grounded point.',
-    tip: 'No strap? Touch bare, unpainted case metal often and don’t build on carpet.',
-  },
-  {
-    id: 'screwdriver',
-    name: 'Phillips #2 screwdriver',
-    short: 'The only tool you really need',
-    category: 'tools',
-    qty: 1,
-    price: '$8–25',
-    specs: ['Phillips #2 tip (fits most PC screws)', 'Magnetic tip helps hold tiny M.2 screws', 'Long shaft for reaching inside the case'],
-    about:
-      'Almost every screw in a desktop PC is a Phillips #2 head: motherboard, PSU, GPU bracket and fan screws. A magnetic tip saves you from dropping screws onto the motherboard.',
-    tip: 'A small #0/#1 bit is handy for M.2 screws on some boards.',
-  },
   {
     id: 'case',
     name: 'ATX mid-tower case',
@@ -395,7 +368,7 @@ export const PARTS: Part[] = [
     id: 'zip-ties',
     name: 'Velcro straps / zip ties',
     short: 'Tidy up the cables',
-    category: 'tools',
+    category: 'small',
     qty: 1,
     price: '$3–8',
     specs: ['Reusable velcro straps recommended', 'Use tie-down points behind the tray'],

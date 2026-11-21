@@ -57,7 +57,7 @@ const Plug = ({ cols, rows, housing, wires, w = 60, label }: { cols: number; row
       <rect x={50 - 6} y={y - 5} width={12} height={5} rx={1} fill={housing} />
       <Pins x={x + 3} y={y + 3} cols={cols} rows={rows} size={size} color="#0b1220" />
       {label && (
-        <text x={50} y={y - 8} textAnchor="middle" fontSize={8} fontWeight={700} fill="#cbd5e1" fontFamily="JetBrains Mono, monospace">
+        <text x={50} y={y - 8} textAnchor="middle" fontSize={8} fontWeight={700} fill="#475569" fontFamily="JetBrains Mono, monospace">
           {label}
         </text>
       )}
@@ -79,29 +79,6 @@ const Screw = ({ x, y, s = 1, color = '#cbd5e1' }: { x: number; y: number; s?: n
 /* Icons -------------------------------------------------------------------- */
 
 const ICONS: Record<PartId, () => ReactElement> = {
-  'wrist-strap': () => (
-    <g>
-      <ellipse cx={34} cy={34} rx={22} ry={14} fill="none" stroke="#3b82f6" strokeWidth={7} />
-      <rect x={28} y={42} width={14} height={9} rx={2} fill="#1e3a8a" />
-      <path d="M 35 51 q 6 6 0 10 q -6 4 0 8 q 6 4 0 8 q -6 4 0 8 q 8 6 22 2" stroke="#1d4ed8" strokeWidth={3} fill="none" className="wiggle" />
-      <g transform="translate(58 78) rotate(-20)">
-        <path d="M 0 0 l 26 -4 l 0 6 l -26 4 z" fill="#ef4444" />
-        <path d="M 0 4 l 26 6 l 0 -6 z" fill="#b91c1c" />
-        <path d="M 22 -4 l 6 3 l -6 3" fill="#cbd5e1" />
-      </g>
-    </g>
-  ),
-  screwdriver: () => (
-    <g transform="rotate(-35 50 50)">
-      <rect x={18} y={40} width={34} height={20} rx={9} fill="#f97316" />
-      <rect x={22} y={44} width={26} height={2.5} rx={1} fill="#fdba74" opacity={0.7} />
-      <rect x={22} y={53} width={26} height={2.5} rx={1} fill="#c2410c" opacity={0.6} />
-      <rect x={52} y={46} width={8} height={8} rx={1} fill="#111827" />
-      <rect x={60} y={48} width={26} height={4} fill="#cbd5e1" />
-      <path d="M 86 47 l 6 3 l -6 3 z" fill="#94a3b8" />
-      <circle cx={92} cy={50} r={2.5} fill="#38bdf8" className="pulse" />
-    </g>
-  ),
   case: () => (
     <g>
       <rect x={22} y={8} width={56} height={84} rx={4} fill="#111827" stroke="#334155" strokeWidth={2} />
@@ -145,7 +122,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <text x={50} y={30} textAnchor="middle" fontSize={14} fontWeight={800} fill="#22c55e" className="pulse">
         +
       </text>
-      <text x={50} y={86} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={86} textAnchor="middle" fontSize={8} fill="#475569" fontFamily="JetBrains Mono, monospace">
         3V
       </text>
     </g>
@@ -171,7 +148,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <text x={50} y={46} textAnchor="middle" fontSize={8} fontWeight={800} fill="#e2e8f0" fontFamily="JetBrains Mono, monospace">
         DDR5
       </text>
-      <text x={50} y={56} textAnchor="middle" fontSize={5.5} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={56} textAnchor="middle" fontSize={5.5} fill="#475569" fontFamily="JetBrains Mono, monospace">
         16GB 6000 CL30
       </text>
       <rect x={8} y={64} width={84} height={8} fill="#166534" />
@@ -202,7 +179,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
   'm2-screw': () => (
     <g>
       <Screw x={50} y={30} s={1.6} color="#e5e7eb" />
-      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#475569" fontFamily="JetBrains Mono, monospace">
         M2×3
       </text>
     </g>
@@ -242,7 +219,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
           </g>
         </g>
       ))}
-      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#475569" fontFamily="JetBrains Mono, monospace">
         #6-32 ×9
       </text>
     </g>
@@ -274,7 +251,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <Screw x={30} y={20} s={1.1} />
       <Screw x={52} y={36} s={1.1} />
       <Screw x={74} y={22} s={1.1} />
-      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#475569" fontFamily="JetBrains Mono, monospace">
         #6-32 ×9
       </text>
     </g>
@@ -290,7 +267,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <text x={76} y={18} textAnchor="middle" fontSize={7} fontWeight={800} fill="#facc15" fontFamily="JetBrains Mono, monospace">
         850W
       </text>
-      <text x={30} y={18} textAnchor="middle" fontSize={6} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={30} y={18} textAnchor="middle" fontSize={6} fill="#475569" fontFamily="JetBrains Mono, monospace">
         ATX 3.1 GOLD
       </text>
     </g>
@@ -301,7 +278,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <Screw x={44} y={34} s={1} color="#334155" />
       <Screw x={62} y={22} s={1} color="#334155" />
       <Screw x={80} y={34} s={1} color="#334155" />
-      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={92} textAnchor="middle" fontSize={8} fill="#475569" fontFamily="JetBrains Mono, monospace">
         PSU ×4
       </text>
     </g>
@@ -346,7 +323,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
           ))}
         </g>
       ))}
-      <text x={50} y={86} textAnchor="middle" fontSize={8} fill="#94a3b8" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={86} textAnchor="middle" fontSize={8} fill="#475569" fontFamily="JetBrains Mono, monospace">
         thumbscrew ×2
       </text>
     </g>
@@ -385,7 +362,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
           <path d={`M 5 14 C 5 40, ${34 - i * 20 + 8} 60, ${34 - i * 20 + 8} 76`} stroke={c} strokeWidth={2} fill="none" />
           <path d={`M 9 14 C 9 40, ${34 - i * 20 + 11} 60, ${34 - i * 20 + 11} 76`} stroke="#e5e7eb" strokeWidth={2} fill="none" />
           <rect x={0} y={0} width={14} height={14} rx={1.5} fill="#0f172a" stroke="#475569" />
-          <text x={7} y={-3} textAnchor="middle" fontSize={5.5} fill="#cbd5e1" fontFamily="JetBrains Mono, monospace">
+          <text x={7} y={-3} textAnchor="middle" fontSize={5.5} fill="#475569" fontFamily="JetBrains Mono, monospace">
             {l}
           </text>
         </g>
@@ -399,7 +376,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <rect x={24} y={22} width={52} height={28} rx={3} fill="#2563eb" stroke="#1e3a8a" />
       <rect x={44} y={18} width={12} height={4} fill="#2563eb" />
       <Pins x={29} y={27} cols={10} rows={2} size={3} gap={1.4} color="#0b1220" />
-      <text x={50} y={14} textAnchor="middle" fontSize={7} fontWeight={700} fill="#93c5fd" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={14} textAnchor="middle" fontSize={7} fontWeight={700} fill="#475569" fontFamily="JetBrains Mono, monospace">
         USB 3.2
       </text>
     </g>
@@ -411,7 +388,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <rect x={36} y={33} width={28} height={8} rx={4} fill="#0b1220" />
       <circle cx={30} cy={37} r={3} fill="#94a3b8" />
       <circle cx={70} cy={37} r={3} fill="#94a3b8" />
-      <text x={50} y={20} textAnchor="middle" fontSize={7} fontWeight={700} fill="#cbd5e1" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={20} textAnchor="middle" fontSize={7} fontWeight={700} fill="#475569" fontFamily="JetBrains Mono, monospace">
         USB-C KEY-A
       </text>
     </g>
@@ -466,7 +443,7 @@ const ICONS: Record<PartId, () => ReactElement> = {
       <path d="M 30 24 h 40 v 18 l -6 6 h -34 z" fill="#475569" stroke="#94a3b8" />
       <rect x={34} y={28} width={30} height={10} fill="#0b1220" />
       <rect x={36} y={30} width={26} height={3} fill="#facc15" opacity={0.7} />
-      <text x={50} y={16} textAnchor="middle" fontSize={7} fontWeight={700} fill="#cbd5e1" fontFamily="JetBrains Mono, monospace">
+      <text x={50} y={16} textAnchor="middle" fontSize={7} fontWeight={700} fill="#475569" fontFamily="JetBrains Mono, monospace">
         DP 2.1
       </text>
     </g>

@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/core';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BootScreen } from './components/BootScreen';
 import { Inventory, type PartStatus } from './components/Inventory';
 import { PartIcon } from './components/PartIcon';
@@ -22,16 +22,18 @@ import { StepPanel } from './components/StepPanel';
 import { PARTS, PART_MAP, type PartId } from './data/parts';
 import { ALL_TARGETS, PHASES, STEPS, TARGET_STEP, type Target } from './data/steps';
 
-interface SavedState {
+const Viewer3D = lazy(() => import('./components/Viewer3D'));
+
+export interface SavedState {
   step: number;
   filled: string[];
   powered: boolean;
   finished: boolean;
 }
-const KEY = 'pc-build-academy-v1';
+const KEY = 'pc-build-academy-v2';
 const initial: SavedState = { step: 0, filled: [], powered: false, finished: false };
 
-function load(): SavedState {
+export function load(): SavedState {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return { ...initial, ...JSON.parse(raw) };
@@ -47,8 +49,20 @@ interface Toast {
   text: string;
 }
 
-export default function App() {
-  const [state, setState] = useState<SavedState>(load);
+/** index of the first step that isn't finished yet (= the furthest step you may open) */
+export function furthestStep(s: SavedState): number {
+  const f = new Set(s.filled);
+  const done = (i: number) => (STEPS[i].action === 'power' ? s.finished : STEPS[i].targets.every((t) => f.has(t.id)));
+  const i = STEPS.findIndex((_, k) => !done(k));
+  return i === -1 ? STEPS.length - 1 : i;
+}
+
+export default function App({ startStep, onHome }: { startStep?: number; onHome: () => void }) {
+  // a step picked on the home page is applied up front (only if it's already unlocked)
+  const [state, setState] = useState<SavedState>(() => {
+    const s = load();
+    return startStep !== undefined && startStep >= 0 && startStep <= furthestStep(s) ? { ...s, step: startStep } : s;
+  });
   const [dragPart, setDragPart] = useState<PartId | null>(null);
   const [selectedPart, setSelectedPart] = useState<PartId | null>(null);
   const [infoPart, setInfoPart] = useState<PartId | null>(null);
@@ -56,7 +70,9 @@ export default function App() {
   const [wrong, setWrong] = useState<string | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showBoot, setShowBoot] = useState(false);
-  const [showIntro, setShowIntro] = useState(() => load().filled.length === 0);
+  const [showIntro, setShowIntro] = useState(false);
+  const [view, setView] = useState<'2d' | '3d'>('2d');
+  const [pip, setPip] = useState(true);
   const toastId = useRef(0);
 
   useEffect(() => {
@@ -172,6 +188,11 @@ export default function App() {
     setState((s) => ({ ...s, step: Math.max(0, Math.min(STEPS.length - 1, i)) }));
   };
 
+  // jump to a step chosen on the home page (only if it's already unlocked)
+  useEffect(() => {
+    if (startStep !== undefined) history.replaceState(null, '', '#/build');
+  }, [startStep]);
+
   const onHint = () => {
     const t = activeTargets[0];
     if (!t) return;
@@ -204,7 +225,6 @@ export default function App() {
     if (!confirm('Start the build over from scratch?')) return;
     setState(initial);
     setShowBoot(false);
-    setShowIntro(true);
   };
 
   const totalTargets = ALL_TARGETS.length + 1;
@@ -212,10 +232,10 @@ export default function App() {
 
   return (
     <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setDragPart(null)}>
-      <GlobalDefs />
+
       <div className="app">
         <header className="topbar">
-          <div className="brand">
+          <div className="brand clickable" onClick={onHome} title="Back to home">
             <div className="logo">
               <PartIcon id="case" size={34} />
             </div>
@@ -243,6 +263,9 @@ export default function App() {
               <motion.div className="bar" animate={{ width: `${progress * 100}%` }} />
               <span>{Math.round(progress * 100)}%</span>
             </div>
+            <button className="btn ghost small" onClick={onHome}>
+              ← Home
+            </button>
             <button className="btn ghost small" onClick={() => setShowIntro(true)}>
               How to play
             </button>
@@ -270,19 +293,54 @@ export default function App() {
           <Inventory status={status} selectedPart={selectedPart} hintPart={hint?.part ?? null} onSelect={onSelectPart} onInfo={setInfoPart} />
 
           <section className="stage">
-            <Scene
-              scene={step.scene}
-              has={has}
-              powered={state.powered}
-              activeTargets={activeTargets}
-              draggingPart={dragPart}
-              selectedPart={selectedPart}
-              hintTarget={hint?.target ?? null}
-              wrongTarget={wrong}
-              onZoneClick={onZoneClick}
-            />
+            <div className="stage-bar">
+              <div className="seg" role="tablist" aria-label="View mode">
+                <button role="tab" aria-selected={view === '2d'} className={view === '2d' ? 'on' : ''} onClick={() => setView('2d')}>
+                  2D build
+                </button>
+                <button role="tab" aria-selected={view === '3d'} className={view === '3d' ? 'on' : ''} onClick={() => setView('3d')}>
+                  3D view
+                </button>
+              </div>
+              {view === '2d' && (
+                <label className="toggle inline">
+                  <input type="checkbox" checked={pip} onChange={(e) => setPip(e.target.checked)} /> Live 3D preview
+                </label>
+              )}
+            </div>
+            {view === '2d' ? (
+              <Scene
+                scene={step.scene}
+                has={has}
+                powered={state.powered}
+                activeTargets={activeTargets}
+                draggingPart={dragPart}
+                selectedPart={selectedPart}
+                hintTarget={hint?.target ?? null}
+                wrongTarget={wrong}
+                onZoneClick={onZoneClick}
+                overlay={
+                  pip ? (
+                    <div className="pip" onClick={() => setView('3d')} title="Open the full 3D view">
+                      <Suspense fallback={<div className="viewer-loading">Loading 3D…</div>}>
+                        <Viewer3D has={has} powered={state.powered} compact />
+                      </Suspense>
+                      <span className="pip-label">3D · click to expand</span>
+                    </div>
+                  ) : null
+                }
+              />
+            ) : (
+              <div className="scene">
+                <Suspense fallback={<div className="viewer-loading">Loading 3D…</div>}>
+                  <Viewer3D has={has} powered={state.powered} fresh={step.targets.map((t) => t.id)} />
+                </Suspense>
+              </div>
+            )}
             <div className="stage-foot">
-              {selectedPart ? (
+              {view === '3d' ? (
+                <span>Drag to rotate · scroll to zoom · right-drag to pan. Switch to <b>2D build</b> to place parts.</span>
+              ) : selectedPart ? (
                 <span>
                   <b>{PART_MAP[selectedPart].name}</b> selected. Tap a glowing spot to place it, or tap the card again to cancel.
                 </span>
@@ -411,7 +469,7 @@ function FinishCard({ onReset, onClose }: { onReset: () => void; onClose: () => 
 }
 
 /** gradients shared by every SVG on the page */
-function GlobalDefs() {
+export function GlobalDefs() {
   return (
     <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
       <defs>
@@ -444,8 +502,8 @@ function GlobalDefs() {
           <stop offset="1" stopColor="#6b7280" />
         </linearGradient>
         <linearGradient id="desk" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#0d1524" />
-          <stop offset="1" stopColor="#0a0f1a" />
+          <stop offset="0" stopColor="#f8fafc" />
+          <stop offset="1" stopColor="#e9eef4" />
         </linearGradient>
         <linearGradient id="bag" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#cbd5e1" />
@@ -460,7 +518,7 @@ function GlobalDefs() {
           <rect width="6" height="6" fill="#334155" opacity="0.3" />
         </pattern>
         <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 H 0 V 40" fill="none" stroke="#1e3350" strokeWidth="1" opacity="0.5" />
+          <path d="M 40 0 H 0 V 40" fill="none" stroke="#d5dde7" strokeWidth="1" opacity="0.8" />
         </pattern>
         <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8" />
